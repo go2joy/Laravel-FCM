@@ -34,13 +34,21 @@ abstract class BaseRequest
      *
      * @return array
      */
-    protected function buildRequestHeader()
+    protected function buildRequestHeader($partner = false)
     {
-        return [
-            'Authorization' => 'key='.$this->config['server_key'],
-            'Content-Type' => 'application/json',
-            'project_id' => $this->config['sender_id'],
-        ];
+        if ($partner == true) {
+            return [
+                'Authorization' => 'key='.$this->config['server_key_partner'],
+                'Content-Type' => 'application/json',
+                'project_id' => $this->config['sender_id_partner'],
+            ];
+        }else{
+            return [
+                'Authorization' => 'key='.$this->config['server_key'],
+                'Content-Type' => 'application/json',
+                'project_id' => $this->config['sender_id'],
+            ];
+        }
     }
 
     /**
@@ -55,10 +63,10 @@ abstract class BaseRequest
      *
      * @return array
      */
-    public function build()
+    public function build($partner = false)
     {
         return [
-            'headers' => $this->buildRequestHeader(),
+            'headers' => $this->buildRequestHeader($partner),
             'json' => $this->buildBody(),
         ];
     }

@@ -32,7 +32,7 @@ class FCMSender extends HTTPSender
      *
      * @return DownstreamResponse|null
      */
-    public function sendTo($to, Options $options = null, PayloadNotification $notification = null, PayloadData $data = null)
+    public function sendTo($to, Options $options = null, PayloadNotification $notification = null, PayloadData $data = null, $partner = false)
     {
         $response = null;
 
@@ -41,7 +41,7 @@ class FCMSender extends HTTPSender
             foreach ($partialTokens as $tokens) {
                 $request = new Request($tokens, $options, $notification, $data);
 
-                $responseGuzzle = $this->post($request);
+                $responseGuzzle = $this->post($request, $partner);
 
                 $responsePartial = new DownstreamResponse($responseGuzzle, $tokens);
                 if (!$response) {
@@ -52,7 +52,7 @@ class FCMSender extends HTTPSender
             }
         } else {
             $request = new Request($to, $options, $notification, $data);
-            $responseGuzzle = $this->post($request);
+            $responseGuzzle = $this->post($request, $partner);
 
             $response = new DownstreamResponse($responseGuzzle, $to);
         }
@@ -70,11 +70,11 @@ class FCMSender extends HTTPSender
      *
      * @return GroupResponse
      */
-    public function sendToGroup($notificationKey, Options $options = null, PayloadNotification $notification = null, PayloadData $data = null)
+    public function sendToGroup($notificationKey, Options $options = null, PayloadNotification $notification = null, PayloadData $data = null, $partner = false)
     {
         $request = new Request($notificationKey, $options, $notification, $data);
 
-        $responseGuzzle = $this->post($request);
+        $responseGuzzle = $this->post($request, $partner);
 
         return new GroupResponse($responseGuzzle, $notificationKey);
     }
@@ -89,11 +89,11 @@ class FCMSender extends HTTPSender
      *
      * @return TopicResponse
      */
-    public function sendToTopic(Topics $topics, Options $options = null, PayloadNotification $notification = null, PayloadData $data = null)
+    public function sendToTopic(Topics $topics, Options $options = null, PayloadNotification $notification = null, PayloadData $data = null, $partner = false)
     {
         $request = new Request(null, $options, $notification, $data, $topics);
 
-        $responseGuzzle = $this->post($request);
+        $responseGuzzle = $this->post($request, $partner);
 
         return new TopicResponse($responseGuzzle, $topics);
     }
@@ -105,10 +105,10 @@ class FCMSender extends HTTPSender
      *
      * @return null|\Psr\Http\Message\ResponseInterface
      */
-    protected function post($request)
+    protected function post($request, $partner = false)
     {
         try {
-            $responseGuzzle = $this->client->request('post', $this->url, $request->build());
+            $responseGuzzle = $this->client->request('post', $this->url, $request->build($partner));
         } catch (ClientException $e) {
             $responseGuzzle = $e->getResponse();
         }
