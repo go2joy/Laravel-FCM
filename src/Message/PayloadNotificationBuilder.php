@@ -32,6 +32,8 @@ class PayloadNotificationBuilder
      */
     protected $icon;
 
+    protected $image;
+
     /**
      * @internal
      *
@@ -166,6 +168,13 @@ class PayloadNotificationBuilder
     public function setIcon($icon)
     {
         $this->icon = $icon;
+
+        return $this;
+    }
+
+    public function setImage($image)
+    {
+        $this->image = $image;
 
         return $this;
     }
@@ -343,6 +352,11 @@ class PayloadNotificationBuilder
     public function getIcon()
     {
         return $this->icon;
+    }
+
+    public function getImage()
+    {
+        return $this->image;
     }
 
     /**
